@@ -66,6 +66,18 @@ XRPL_SEED=$(cat /keys/book.seed) dotnet run -c Release -- \
 On testnet, omitting the seed asks the faucet for a funded wallet. On mainnet that is an error —
 a live account has to be funded deliberately.
 
+## What it writes to `--out`
+
+| file | content |
+|---|---|
+| `run-dataset.json` | the whole run: transaction hashes, ledgers, fees, per-ledger statistics, verification result — this is what `build-index.mjs` consumes |
+| `transactions.csv` | one row per transaction: sequence, hash, ledger, fee, payload size, explorer URL |
+| `ledgers.csv` | one row per ledger: our transactions, total transactions, our share, close time |
+| `fee_samples.csv` | network load sampled before each burst: open-ledger fee, queue size, ledger size |
+| `rebuilt-from-ledger.txt` | the file as read back out of the ledger, for an external diff |
+| `run-state.json` | start sequence and source digest, needed by `--resume` |
+| `wallet.txt` | written only when the faucet created the wallet (testnet) |
+
 ## Safety rails
 
 - The seed is read from an environment variable, never from an argument, so it does not land in

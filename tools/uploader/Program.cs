@@ -299,7 +299,7 @@ internal static class Program
         string rebuiltHash = Convert.ToHexString(SHA256.HashData(rebuilt));
         bool byteMatch = rebuilt.Length <= payload.Length && rebuilt.AsSpan().SequenceEqual(payload.AsSpan(0, rebuilt.Length));
         bool complete = rebuilt.Length == payload.Length;
-        await File.WriteAllBytesAsync(System.IO.Path.Combine(outDir, "rebuilt_from_testnet.txt"), rebuilt);
+        await File.WriteAllBytesAsync(System.IO.Path.Combine(outDir, "rebuilt-from-ledger.txt"), rebuilt);
         Log($"rebuilt {rebuilt.Length:N0} B, complete={complete}, sha256 match={rebuiltHash == payloadHash}, byte-for-byte={byteMatch}");
 
         JsonElement after = await Send(client, new AccountInfoRequest(wallet.ClassicAddress) { LedgerIndex = new LedgerIndex(LedgerIndexType.Validated) });
@@ -363,7 +363,7 @@ internal static class Program
             Transactions: applied.Values.Select(t => new TxLink(t.Sequence, t.Hash, t.Ledger, t.FeeDrops, t.PayloadBytes,
                 $"{network.Explorer}/transactions/{t.Hash}")).ToList());
 
-        await File.WriteAllTextAsync(System.IO.Path.Combine(outDir, "testnet_dataset.json"), JsonSerializer.Serialize(dataset, JsonOut));
+        await File.WriteAllTextAsync(System.IO.Path.Combine(outDir, "run-dataset.json"), JsonSerializer.Serialize(dataset, JsonOut));
 
         var csv = new System.Text.StringBuilder("sequence,hash,ledger,fee_drops,payload_bytes,url\n");
         foreach (TxLink t in dataset.Transactions)

@@ -3,6 +3,7 @@
  */
 import { LedgerClient } from './ledger.mjs';
 import { layout, readChapter } from './reader.mjs';
+import { chapterRoute, parseChapterRoute } from './routing.mjs';
 
 const $ = (id) => document.getElementById(id);
 
@@ -34,7 +35,7 @@ async function boot() {
   renderAbout();
   bindEvents();
 
-  const wanted = chapterFromHash() ?? 1;
+  const wanted = parseChapterRoute(location.hash) ?? 1;
   await openChapter(wanted);
 }
 
@@ -46,17 +47,12 @@ async function fetchJson(path) {
 
 // ─────────────────────────── reader ───────────────────────────
 
-function chapterFromHash() {
-  const match = /^#\/chapter\/(\d+)$/.exec(location.hash);
-  return match ? Number(match[1]) : null;
-}
-
 async function openChapter(id) {
   const chapter = state.chapters.find((c) => c.id === id);
   if (!chapter) return;
 
   state.current = chapter;
-  history.replaceState(null, '', `#/chapter/${id}`);
+  history.replaceState(null, '', chapterRoute(id));
   highlightContents(id);
 
   $('chapter').hidden = true;
@@ -289,8 +285,9 @@ function bindEvents() {
   }
 
   window.addEventListener('hashchange', () => {
-    const id = chapterFromHash();
-    if (id && id !== state.current?.id) openChapter(id);
+    // Front matter is chapter 0, so test for null — a plain truthiness check drops it.
+    const id = parseChapterRoute(location.hash);
+    if (id !== null && id !== state.current?.id) openChapter(id);
   });
 
   document.addEventListener('keydown', (event) => {

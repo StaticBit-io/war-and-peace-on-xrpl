@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node --test test/offsets.test.mjs",
+    "test": "node --test test/offsets.test.mjs test/routing.test.mjs",
     "serve": "npx --yes serve -l 4173 ."
   },
   "license": "MIT"

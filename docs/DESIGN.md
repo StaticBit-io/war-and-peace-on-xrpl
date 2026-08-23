@@ -1,6 +1,7 @@
 # Design — War and Peace on the XRP Ledger
 
 Date: 2026-08-23
+Network: XRPL Mainnet — account [rU1A1kuVpYHk3TZYWJxVtPUc94aXyteizy](https://livenet.xrpl.org/accounts/rU1A1kuVpYHk3TZYWJxVtPUc94aXyteizy)
 
 ## Goal
 
@@ -15,7 +16,8 @@ skeptic: if it quietly served a cached copy of the book, the demonstration would
 - **Public nodes differ in history depth.** A node may not hold a transaction from months ago, and
   `tx` will answer `txNotFound`.
 - **GitHub Pages serves static files only.** No server-side code, no build step required.
-- **Test networks get reset.** The data backing the site is not permanent.
+- **Test networks get reset.** The site was built and rehearsed against a testnet copy, but that
+  copy would have vanished at the next reset — which is why the published book lives on mainnet.
 
 ## Decisions
 
@@ -64,8 +66,9 @@ path from transaction to rendered paragraph.
 ### Network is configuration, not code
 
 Everything network-specific — name, WebSocket endpoints, explorer URL, account — lives in
-`data/manifest.json`. Moving the site from testnet to mainnet is a matter of regenerating the
-index from a different run dataset.
+`data/manifest.json`. Moving the site from testnet to mainnet turned out to be exactly that and
+nothing more: regenerate the index from the mainnet run dataset, commit `data/`, done. No code
+changed in the move.
 
 ## Structure
 

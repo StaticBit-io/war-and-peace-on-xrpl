@@ -1,23 +1,32 @@
 # War and Peace on the XRP Ledger
 
 The complete text of Tolstoy's *War and Peace* — 3,339,794 bytes — lives inside the memo fields of
-3,278 XRPL transactions. This site reads it back, one chapter at a time, straight from the ledger.
+3,278 transactions on the XRP Ledger **mainnet**. This site reads it back, one chapter at a time,
+straight from the ledger.
 
 **No copy of the book is stored here.** This repository holds only a map: chapter byte ranges,
 transaction hashes and checksums. Every character you read is fetched from a public XRPL node at
 read time and verified against a SHA-256 digest before it reaches the page.
+
+Read it: **<https://staticbit-io.github.io/war-and-peace-on-xrpl/>**
 
 ## The numbers
 
 | | |
 |---|---|
 | Book | 3,339,794 bytes (Maude translation, [Project Gutenberg #2600](https://www.gutenberg.org/ebooks/2600)) |
+| Network | XRPL Mainnet |
+| Account | [rU1A1kuVpYHk3TZYWJxVtPUc94aXyteizy](https://livenet.xrpl.org/accounts/rU1A1kuVpYHk3TZYWJxVtPUc94aXyteizy) |
 | Transactions | 3,278 `AccountSet`, 1,019 bytes of payload each |
-| Ledgers | 378 |
-| Fees burned | 0.039336 XRP |
-| Time to write | 20.8 minutes |
-| Time to read back | 7.4 seconds |
+| Ledgers | 236 ([106497159](https://livenet.xrpl.org/ledgers/106497159) – [106497394](https://livenet.xrpl.org/ledgers/106497394)) |
+| Fees burned | 0.039336 XRP — about four cents |
+| Time to write | 15.3 minutes |
+| Time to read back | 11.9 seconds |
 | Round trip | byte-for-byte identical to the source file |
+
+Storing 3.3 MB of text cost less than a cup of coffee because **an XRPL fee does not depend on
+transaction size**: 10 drops is the base cost whether the transaction carries a payment or a
+kilobyte of Tolstoy.
 
 ## Why 1,019 bytes
 
@@ -61,6 +70,13 @@ The offset arithmetic is where a silent bug would corrupt the text, so it is tes
 boundary cases: ranges that start exactly on a chunk edge, ranges that end on one, truncated
 fetches, and short final chunks.
 
+## Putting a book into the ledger
+
+The write side lives in [`tools/uploader`](tools/uploader) — the same tool that uploaded this copy.
+It cuts a file into chunks, signs one transaction per chunk locally, submits them, then reads
+everything back and verifies the round trip. See its README for the flags and the safety rails
+(cost estimate before sending, budget ceiling, resume after an interrupted run).
+
 ## Rebuilding the index
 
 The index is generated once from the book and the run dataset produced by the upload tool:
@@ -87,8 +103,9 @@ The reader takes everything from `data/manifest.json` — network name, WebSocke
 explorer base URL. Re-running `build-index.mjs` against a dataset from a different network is
 enough to move the site; no code changes are needed.
 
-Note that public test networks are periodically reset. When that happens the transactions backing
-this site disappear and the reader will say so rather than showing partial text.
+An earlier copy of this book was uploaded to testnet first, as a rehearsal. Public test networks are
+periodically reset, which is why the live copy lives on mainnet: the transactions behind this site
+are as permanent as the ledger itself.
 
 ## Licence
 

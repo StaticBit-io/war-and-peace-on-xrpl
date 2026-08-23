@@ -1,13 +1,14 @@
 {
-  "network": "XRPL Testnet",
-  "networkKey": "testnet",
+  "network": "XRPL Mainnet",
+  "networkKey": "mainnet",
   "endpoints": [
-    "wss://s.altnet.rippletest.net:51233",
-    "wss://testnet.xrpl-labs.com"
+    "wss://xrplcluster.com",
+    "wss://s2.ripple.com",
+    "wss://s1.ripple.com"
   ],
-  "explorer": "https://testnet.xrpl.org",
-  "account": "rDBVo3ho2jit1gbZqC5XaAKrt1CScmsvjK",
-  "accountUrl": "https://testnet.xrpl.org/accounts/rDBVo3ho2jit1gbZqC5XaAKrt1CScmsvjK",
+  "explorer": "https://livenet.xrpl.org",
+  "account": "rU1A1kuVpYHk3TZYWJxVtPUc94aXyteizy",
+  "accountUrl": "https://livenet.xrpl.org/accounts/rU1A1kuVpYHk3TZYWJxVtPUc94aXyteizy",
   "book": {
     "title": "War and Peace",
     "author": "Leo Tolstoy",
@@ -22,19 +23,19 @@
   "ledger": {
     "chunkSize": 1019,
     "transactions": 3278,
-    "startSequence": 20160569,
-    "firstLedger": 20160572,
-    "lastLedger": 20160949,
-    "ledgersUsed": 378,
+    "startSequence": 106497148,
+    "firstLedger": 106497159,
+    "lastLedger": 106497394,
+    "ledgersUsed": 236,
     "payloadBytesPerTx": 1019,
     "bytesInLedgerPerTx": 1323.1,
     "feeDropsPerTx": 12,
     "feeBurnedDrops": 39336,
     "feeBurnedXrp": 0.039336,
-    "submitMinutes": 20.84,
-    "readBackSeconds": 7.4,
-    "firstCloseTime": "2026-08-23T19:17:21Z",
-    "lastCloseTime": "2026-08-23T19:38:11Z"
+    "submitMinutes": 15.3,
+    "readBackSeconds": 11.92,
+    "firstCloseTime": "2026-08-23T20:59:40Z",
+    "lastCloseTime": "2026-08-23T21:14:52Z"
   },
   "verification": {
     "rebuiltBytes": 3339794,

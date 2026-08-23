@@ -131,24 +131,54 @@ function applyRawVisibility() {
   for (const pre of document.querySelectorAll('.source-raw')) pre.hidden = !state.showRaw;
 }
 
+/** Groups consecutive chapters into the book they belong to, preserving order. */
+function groupByBook(chapters) {
+  const groups = [];
+  for (const chapter of chapters) {
+    const last = groups.at(-1);
+    if (last && last.book === chapter.book) last.chapters.push(chapter);
+    else groups.push({ book: chapter.book, chapters: [chapter] });
+  }
+  return groups;
+}
+
 function renderContents() {
   $('contents-count').textContent = `${state.chapters.length - 1} chapters`;
-  let lastBook = null;
 
-  $('chapter-list').innerHTML = state.chapters
-    .map((chapter) => {
-      const bookHeading = chapter.book !== lastBook ? `<li class="book-heading">${escapeHtml(chapter.book)}</li>` : '';
-      lastBook = chapter.book;
-      return `${bookHeading}<li><button class="chapter-link" data-id="${chapter.id}">${escapeHtml(chapter.title)}</button></li>`;
+  $('chapter-list').innerHTML = groupByBook(state.chapters)
+    .map((group) => {
+      // Front matter is a single entry — a collapsible group around it would be noise.
+      if (group.chapters.length === 1) return chapterLink(group.chapters[0], 'loose');
+
+      const links = group.chapters.map((chapter) => chapterLink(chapter)).join('');
+
+      return `<li class="book">
+        <details class="book-details">
+          <summary class="book-summary">
+            <span class="book-name">${escapeHtml(group.book)}</span>
+            <span class="book-count">${group.chapters.length}</span>
+          </summary>
+          <ol class="book-chapters">${links}</ol>
+        </details>
+      </li>`;
     })
     .join('');
 }
+
+const chapterLink = (chapter, liClass = '') =>
+  `<li${liClass ? ` class="${liClass}"` : ''}><button class="chapter-link" data-id="${chapter.id}">${escapeHtml(chapter.title)}</button></li>`;
 
 function highlightContents(id) {
   for (const link of document.querySelectorAll('.chapter-link')) {
     link.classList.toggle('is-current', Number(link.dataset.id) === id);
   }
-  document.querySelector('.chapter-link.is-current')?.scrollIntoView({ block: 'nearest' });
+
+  const current = document.querySelector('.chapter-link.is-current');
+  if (!current) return;
+
+  // Open the book holding this chapter; leave any other open book as the reader left it.
+  current.closest('details')?.setAttribute('open', '');
+  current.scrollIntoView({ block: 'nearest' });
 }
 
 // ─────────────────────────── dashboard ───────────────────────────

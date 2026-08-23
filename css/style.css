@@ -41,6 +41,28 @@ body {
   line-height: 1.55;
 }
 
+/* ─── scrollbars ───
+   The default bars are bright chrome on a dark page. Muted to the page palette
+   so they read as part of the paper rather than the browser. */
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); background-clip: content-box; }
+::-webkit-scrollbar-corner { background: transparent; }
+
 /* ─── masthead ─── */
 
 .masthead {
@@ -172,13 +194,53 @@ main { max-width: 1180px; margin: 0 auto; padding: 1.5rem; }
 .contents-count { font-size: 0.72rem; color: var(--ink-faint); }
 
 .chapter-list { list-style: none; margin: 0.6rem 0 0; padding: 0; }
+.book-chapters { list-style: none; margin: 0.15rem 0 0.5rem; padding: 0 0 0 0.5rem; }
+.loose { margin-bottom: 0.4rem; }
 
-.book-heading {
+.book-details { border-bottom: 1px solid var(--rule); }
+.book-details:last-child { border-bottom: 0; }
+
+.book-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.2rem;
+  cursor: pointer;
+  list-style: none;
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   color: var(--ink-faint);
-  margin: 1rem 0 0.3rem;
+  user-select: none;
+}
+
+.book-summary::-webkit-details-marker { display: none; }
+
+/* Disclosure triangle, drawn so it can rotate when the book opens. */
+.book-summary::before {
+  content: '';
+  flex: none;
+  width: 0;
+  height: 0;
+  border-left: 4px solid currentColor;
+  border-top: 3.5px solid transparent;
+  border-bottom: 3.5px solid transparent;
+  transition: transform 0.15s ease;
+}
+
+.book-details[open] > .book-summary::before { transform: rotate(90deg); }
+.book-summary:hover { color: var(--ink); }
+.book-details[open] > .book-summary { color: var(--ink-soft); font-weight: 600; }
+
+.book-name { flex: 1; min-width: 0; }
+
+.book-count {
+  font-size: 0.66rem;
+  letter-spacing: 0;
+  color: var(--ink-faint);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 0.05rem 0.4rem;
 }
 
 .chapter-link {

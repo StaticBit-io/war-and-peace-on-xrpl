@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>War and Peace, stored on the XRP Ledger</title>
+<meta name="description" content="The complete text of War and Peace lives inside XRPL transaction memos. This reader fetches it back from the ledger, one chapter at a time.">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📖</text></svg>">
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand">
+      <h1>War&nbsp;and&nbsp;Peace <span class="brand-sub">on the XRP Ledger</span></h1>
+      <p class="tagline">Every character below is fetched from transaction memos at read time. This site stores no copy of the book.</p>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab is-active" data-view="read" role="tab">Read</button>
+      <button class="tab" data-view="about" role="tab">The experiment</button>
+    </nav>
+  </div>
+  <div class="netbar">
+    <span class="net-dot" id="net-dot"></span>
+    <span id="net-status">connecting…</span>
+    <span class="net-sep">·</span>
+    <a id="net-account" href="#" target="_blank" rel="noopener">account</a>
+  </div>
+</header>
+
+<main>
+  <!-- ─────────────── reader ─────────────── -->
+  <section id="view-read" class="view is-active">
+    <aside class="contents" id="contents">
+      <div class="contents-head">
+        <h2>Contents</h2>
+        <span class="contents-count" id="contents-count"></span>
+      </div>
+      <ol class="chapter-list" id="chapter-list"></ol>
+    </aside>
+
+    <article class="page" id="page">
+      <div class="page-status" id="page-status" hidden></div>
+
+      <div class="chapter" id="chapter" hidden>
+        <div class="chapter-head">
+          <p class="chapter-book" id="chapter-book"></p>
+          <h2 class="chapter-title" id="chapter-title"></h2>
+          <p class="chapter-meta" id="chapter-meta"></p>
+        </div>
+
+        <div class="verify" id="verify" hidden>
+          <span class="verify-badge" id="verify-badge"></span>
+          <code class="verify-digest" id="verify-digest"></code>
+        </div>
+
+        <div class="prose" id="prose"></div>
+
+        <footer class="sources">
+          <div class="sources-head">
+            <h3>Assembled from <span id="sources-count"></span> transactions</h3>
+            <label class="raw-toggle">
+              <input type="checkbox" id="raw-toggle"> show raw memo data
+            </label>
+          </div>
+          <ol class="source-list" id="source-list"></ol>
+        </footer>
+
+        <nav class="pager">
+          <button id="prev-chapter" class="pager-btn">← Previous</button>
+          <button id="next-chapter" class="pager-btn">Next →</button>
+        </nav>
+      </div>
+    </article>
+  </section>
+
+  <!-- ─────────────── dashboard ─────────────── -->
+  <section id="view-about" class="view">
+    <div class="about">
+      <h2>What happened here</h2>
+      <p class="lede" id="about-lede"></p>
+
+      <div class="stats" id="stats"></div>
+
+      <h3>How a chapter comes back</h3>
+      <ol class="steps">
+        <li>The index in this repository gives the chapter's byte range in the book — <em>not</em> its text.</li>
+        <li>That range maps to a run of transactions, each carrying <span id="chunk-size">1019</span> bytes of memo.</li>
+        <li>The browser asks a public node for those transactions by hash, in parallel.</li>
+        <li>Payloads are concatenated and trimmed to the exact byte range.</li>
+        <li>SHA-256 of the result is compared against the digest in the index.</li>
+      </ol>
+
+      <h3>Transactions per ledger</h3>
+      <p class="chart-note" id="chart-note"></p>
+      <div class="chart" id="chart"></div>
+
+      <h3>The numbers behind it</h3>
+      <table class="facts" id="facts"></table>
+
+      <p class="footnote">
+        Source text: <em>War and Peace</em>, translated by Louise and Aylmer Maude,
+        <a href="https://www.gutenberg.org/ebooks/2600" target="_blank" rel="noopener">Project Gutenberg ebook #2600</a> (public domain).
+      </p>
+    </div>
+  </section>
+</main>
+
+<script type="module" src="js/app.mjs"></script>
+</body>
+</html>

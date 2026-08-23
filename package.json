@@ -1,0 +1,12 @@
+{
+  "name": "war-and-peace-on-xrpl",
+  "version": "1.0.0",
+  "description": "Reads War and Peace back out of XRPL transaction memos, one chapter at a time",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test test/offsets.test.mjs",
+    "serve": "npx --yes serve -l 4173 ."
+  },
+  "license": "MIT"
+}

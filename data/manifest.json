@@ -1,0 +1,45 @@
+{
+  "network": "XRPL Testnet",
+  "networkKey": "testnet",
+  "endpoints": [
+    "wss://s.altnet.rippletest.net:51233",
+    "wss://testnet.xrpl-labs.com"
+  ],
+  "explorer": "https://testnet.xrpl.org",
+  "account": "rDBVo3ho2jit1gbZqC5XaAKrt1CScmsvjK",
+  "accountUrl": "https://testnet.xrpl.org/accounts/rDBVo3ho2jit1gbZqC5XaAKrt1CScmsvjK",
+  "book": {
+    "title": "War and Peace",
+    "author": "Leo Tolstoy",
+    "translation": "Louise and Aylmer Maude",
+    "source": "Project Gutenberg ebook #2600",
+    "bytes": 3339794,
+    "sha256": "A5CC99893D57434DF2CEBF9BE20762DA4767F6C2963DD4B57A68608F99535566",
+    "chapters": 366,
+    "books": 17,
+    "frontMatterBytes": 7450
+  },
+  "ledger": {
+    "chunkSize": 1019,
+    "transactions": 3278,
+    "startSequence": 20160569,
+    "firstLedger": 20160572,
+    "lastLedger": 20160949,
+    "ledgersUsed": 378,
+    "payloadBytesPerTx": 1019,
+    "bytesInLedgerPerTx": 1323.1,
+    "feeDropsPerTx": 12,
+    "feeBurnedDrops": 39336,
+    "feeBurnedXrp": 0.039336,
+    "submitMinutes": 20.84,
+    "readBackSeconds": 7.4,
+    "firstCloseTime": "2026-08-23T19:17:21Z",
+    "lastCloseTime": "2026-08-23T19:38:11Z"
+  },
+  "verification": {
+    "rebuiltBytes": 3339794,
+    "rebuiltSha256": "A5CC99893D57434DF2CEBF9BE20762DA4767F6C2963DD4B57A68608F99535566",
+    "byteForByteMatch": true
+  },
+  "generatedFrom": "testnet_dataset.json"
+}

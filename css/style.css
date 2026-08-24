@@ -183,7 +183,10 @@ main { max-width: 1180px; margin: 0 auto; padding: 1.5rem; }
   align-items: baseline;
   justify-content: space-between;
   gap: 0.5rem;
+  list-style: none;
 }
+
+.contents-head::-webkit-details-marker { display: none; }
 
 .contents h2 {
   margin: 0 0 0.2rem;
@@ -466,16 +469,79 @@ main { max-width: 1180px; margin: 0 auto; padding: 1.5rem; }
 /* ─── narrow screens ─── */
 
 @media (max-width: 860px) {
-  #view-read.is-active { grid-template-columns: 1fr; gap: 1.5rem; }
+  /* A sticky masthead ate a third of a phone screen; here the page scrolls it away. */
+  .masthead { position: static; }
+  .masthead-inner { padding: 0.9rem 1.1rem 0.7rem; align-items: center; }
+  .netbar { padding: 0 1.1rem 0.6rem; }
+  .tagline { display: none; }
+  .brand h1 { font-size: 1.2rem; }
+  .brand-sub { display: block; font-size: 0.82rem; }
 
+  /* The account is 34 characters of base58 — it wraps the status bar onto a second
+     line and says nothing at a glance. Truncate, keep it tappable. */
+  .netbar { flex-wrap: nowrap; }
+  #net-account { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  #net-status { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  main { padding: 1.1rem; }
+
+  #view-read.is-active { grid-template-columns: 1fr; gap: 1.2rem; }
+
+  /* Contents collapses behind its heading instead of holding a scroll area of its own —
+     two nested scrollbars on a phone is one too many. */
   .contents {
     position: static;
-    max-height: 14rem;
+    max-height: none;
+    overflow: visible;
     border-right: 0;
     border-bottom: 1px solid var(--rule);
-    padding: 0 0 0.8rem;
+    padding: 0 0 0.7rem;
   }
 
+  .contents-head {
+    cursor: pointer;
+    padding: 0.2rem 0;
+    align-items: center;
+  }
+
+  .contents-head::after {
+    content: '▾';
+    margin-left: auto;
+    color: var(--ink-faint);
+    transition: transform 0.15s ease;
+  }
+
+  .contents-disclosure[open] > .contents-head::after { transform: rotate(180deg); }
+  .contents-disclosure[open] .chapter-list { max-height: 60vh; overflow-y: auto; }
+
   .prose { font-size: 1.02rem; }
+
+  /* Justified text on a 327 px column opens rivers between words. */
+  .prose p { text-align: left; }
+
   .chapter-title { font-size: 1.5rem; }
+  .chapter-meta { font-size: 0.72rem; }
+
+  .sources-head { gap: 0.5rem; }
+  .source-line { gap: 0.4rem 0.6rem; }
+  .source-index { min-width: 2.6rem; }
+  .source-bytes { margin-left: 0; }
+
+  /* A two-column table cannot hold a 34-character address inside 375 px: it pushed
+     past the viewport. Stack label above value instead. */
+  .facts, .facts tbody, .facts tr, .facts th, .facts td { display: block; width: auto; }
+  .facts tr { border-bottom: 1px solid var(--rule); padding: 0.5rem 0; }
+  .facts th, .facts td { border: 0; padding: 0 0 0.15rem; }
+  .facts th { width: auto; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .facts td { word-break: break-word; }
+
+  .stat-value { font-size: 1.25rem; }
+  .pager-btn { flex: 1; }
+}
+
+@media (max-width: 420px) {
+  .masthead-inner { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+  .tabs { width: 100%; }
+  .tab { flex: 1; text-align: center; }
+  .stats { grid-template-columns: 1fr 1fr; }
 }

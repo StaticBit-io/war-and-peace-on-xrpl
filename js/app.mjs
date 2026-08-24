@@ -32,6 +32,7 @@ async function boot() {
 
   renderAccountLink();
   renderContents();
+  bindContentsDisclosure();
   renderAbout();
   bindEvents();
 
@@ -161,6 +162,36 @@ function renderContents() {
     .join('');
 }
 
+/**
+ * On a phone the contents list is taller than the screen, so it collapses behind its
+ * heading and folds away again once a chapter is picked. On a wide screen it is a
+ * sidebar and stays open.
+ */
+const WIDE_SCREEN = '(min-width: 861px)';
+
+function bindContentsDisclosure() {
+  const disclosure = $('contents-disclosure');
+  const wide = window.matchMedia(WIDE_SCREEN);
+
+  // Force it open on a wide screen: there the heading is a plain sidebar title with no
+  // affordance to click, so a list left collapsed by a narrow layout would be unreachable.
+  const sync = () => { if (disclosure.open !== wide.matches) disclosure.open = wide.matches; };
+
+  sync();
+  wide.addEventListener('change', sync);
+  window.addEventListener('resize', sync);          // some browsers miss the media query event
+
+  // A wide screen must never end up collapsed, whatever the user tapped while narrow.
+  disclosure.addEventListener('toggle', () => {
+    if (wide.matches && !disclosure.open) disclosure.open = true;
+  });
+}
+
+/** Folds the contents away after a pick, but only where it covers the text. */
+function collapseContentsOnNarrowScreen() {
+  if (!window.matchMedia(WIDE_SCREEN).matches) $('contents-disclosure').open = false;
+}
+
 const chapterLink = (chapter, liClass = '') =>
   `<li${liClass ? ` class="${liClass}"` : ''}><button class="chapter-link" data-id="${chapter.id}">${escapeHtml(chapter.title)}</button></li>`;
 
@@ -264,7 +295,9 @@ function hideStatus() {
 function bindEvents() {
   $('chapter-list').addEventListener('click', (event) => {
     const button = event.target.closest('.chapter-link');
-    if (button) openChapter(Number(button.dataset.id));
+    if (!button) return;
+    openChapter(Number(button.dataset.id));
+    collapseContentsOnNarrowScreen();
   });
 
   $('prev-chapter').addEventListener('click', () => openChapter(state.current.id - 1));

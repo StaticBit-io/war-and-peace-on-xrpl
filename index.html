@@ -32,11 +32,13 @@
   <!-- ─────────────── reader ─────────────── -->
   <section id="view-read" class="view is-active">
     <aside class="contents" id="contents">
-      <div class="contents-head">
-        <h2>Contents</h2>
-        <span class="contents-count" id="contents-count"></span>
-      </div>
-      <ol class="chapter-list" id="chapter-list"></ol>
+      <details class="contents-disclosure" id="contents-disclosure" open>
+        <summary class="contents-head">
+          <h2>Contents</h2>
+          <span class="contents-count" id="contents-count"></span>
+        </summary>
+        <ol class="chapter-list" id="chapter-list"></ol>
+      </details>
     </aside>
 
     <article class="page" id="page">

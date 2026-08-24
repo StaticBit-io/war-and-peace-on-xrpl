@@ -42,5 +42,5 @@
     "rebuiltSha256": "A5CC99893D57434DF2CEBF9BE20762DA4767F6C2963DD4B57A68608F99535566",
     "byteForByteMatch": true
   },
-  "generatedFrom": "testnet_dataset.json"
+  "generatedFrom": "run-dataset.json"
 }

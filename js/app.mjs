@@ -15,6 +15,7 @@ const state = {
   client: null,
   current: null,
   showRaw: false,
+  requests: 0,
 };
 
 // ─────────────────────────── boot ───────────────────────────
@@ -62,16 +63,20 @@ async function openChapter(id) {
   try {
     const result = await readChapter(
       chapter,
-      state.hashes,
+      state.manifest.account,
       state.client,
       state.manifest.ledger.chunkSize,
       (done, total) => showStatus(`Fetched ${done} of ${total} transactions…`),
     );
+    state.requests += result.requests;
+    $('net-cost').textContent = `${state.requests} request${state.requests === 1 ? '' : 's'}`;
     renderChapter(chapter, result);
     hideStatus();
   } catch (error) {
+    const rateLimited = /too much load|limit reached|rate|slow down/i.test(error.message);
     showStatus(
       `<strong>Could not rebuild this chapter.</strong><br>${escapeHtml(error.message)}<br>` +
+      (rateLimited ? 'That node is rate-limiting this address — pick another one in the header.<br>' : '') +
       `<button id="retry" class="pager-btn">Try again</button>`,
       true,
     );
@@ -266,6 +271,22 @@ function renderAccountLink() {
   const link = $('net-account');
   link.href = state.manifest.accountUrl;
   link.textContent = state.manifest.account;
+
+  // Public nodes rate-limit per IP, so the reader needs a way out when one refuses.
+  const select = $('net-endpoint');
+  select.innerHTML = state.manifest.endpoints
+    .map((url, i) => `<option value="${i}">${url.replace('wss://', '')}</option>`)
+    .join('');
+
+  select.addEventListener('change', async () => {
+    const index = Number(select.value);
+    try {
+      await state.client.useEndpoint(index);
+      $('net-status').textContent = `switched to ${state.client.endpoint}`;
+    } catch {
+      $('net-status').textContent = `cannot reach ${state.manifest.endpoints[index]}`;
+    }
+  });
 }
 
 function renderNetStatus({ endpoint, status }) {

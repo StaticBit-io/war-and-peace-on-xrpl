@@ -79,9 +79,21 @@ const bookTitleAt = (offset) => {
 
 const chunkSize = run.ChunkSize;
 
+const ordered = run.Transactions.slice().sort((a, b) => a.Sequence - b.Sequence);
+const hashes = ordered.map((t) => t.Hash);
+
+if (hashes.length !== run.ChunksApplied) {
+  throw new Error(`hash count ${hashes.length} does not match ChunksApplied ${run.ChunksApplied}`);
+}
+
+
 function entry(id, bookTitle, title, start, end) {
   const slice = book.subarray(start, end);
   const { firstChunk, lastChunk } = chunkRangeFor(start, end, chunkSize);
+  const opening = ordered[firstChunk];
+
+  if (!opening) throw new Error(`no transaction for chunk ${firstChunk} — the index and the run disagree`);
+
   return {
     id,
     book: bookTitle,
@@ -91,6 +103,10 @@ function entry(id, bookTitle, title, start, end) {
     byteLength: end - start,
     firstChunk,
     lastChunk,
+    // Where this chapter starts in the ledger. Reading it costs one account_tx call
+    // instead of paging the whole book up to that point.
+    firstLedger: opening.Ledger,
+    firstSequence: opening.Sequence,
     sha256: sha256(slice),
     words: slice.toString('utf8').split(/\s+/).filter(Boolean).length,
   };
@@ -108,15 +124,6 @@ chapterHeads.forEach((head, i) => {
   chapters.push(entry(i + 1, bookTitleAt(head.offset), head.title, start, end));
   cursor = end;
 });
-
-const hashes = run.Transactions
-  .slice()
-  .sort((a, b) => a.Sequence - b.Sequence)
-  .map((t) => t.Hash);
-
-if (hashes.length !== run.ChunksApplied) {
-  throw new Error(`hash count ${hashes.length} does not match ChunksApplied ${run.ChunksApplied}`);
-}
 
 const ledgers = run.Ledgers.map((l) => ({
   ledger: l.Ledger,

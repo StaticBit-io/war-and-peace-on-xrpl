@@ -24,6 +24,12 @@
     <span class="net-dot" id="net-dot"></span>
     <span id="net-status">connecting…</span>
     <span class="net-sep">·</span>
+    <label class="net-node">node
+      <select id="net-endpoint" title="Public nodes rate-limit per IP. Switch if this one refuses."></select>
+    </label>
+    <span class="net-sep">·</span>
+    <span id="net-cost" title="Requests spent so far">0 requests</span>
+    <span class="net-sep">·</span>
     <a id="net-account" href="#" target="_blank" rel="noopener">account</a>
   </div>
 </header>
@@ -88,7 +94,7 @@
       <ol class="steps">
         <li>The index in this repository gives the chapter's byte range in the book — <em>not</em> its text.</li>
         <li>That range maps to a run of transactions, each carrying <span id="chunk-size">1019</span> bytes of memo.</li>
-        <li>The browser asks a public node for those transactions by hash, in parallel.</li>
+        <li>The browser asks a public node for that stretch of the account's history — one request, up to 400 transactions.</li>
         <li>Payloads are concatenated and trimmed to the exact byte range.</li>
         <li>SHA-256 of the result is compared against the digest in the index.</li>
       </ol>

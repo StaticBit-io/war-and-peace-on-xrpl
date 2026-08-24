@@ -2,6 +2,7 @@
  * Turns a chapter entry from the index into text, by fetching the transactions
  * that carry it and trimming the joined payload down to the chapter's byte range.
  */
+import { readChapterChunks } from './chunks.mjs';
 import { assembleRange } from './offsets.mjs';
 
 const decoder = new TextDecoder('utf-8', { fatal: false });
@@ -16,24 +17,15 @@ export async function sha256Hex(bytes) {
  * Rebuilds one chapter straight from the ledger.
  *
  * @param {object} chapter entry from chapters.json
- * @param {string[]} hashes all transaction hashes, ordered by account sequence
+ * @param {string} account the account holding the book
  * @param {import('./ledger.mjs').LedgerClient} client
  * @param {number} chunkSize payload bytes per transaction
  * @param {(done: number, total: number) => void} [onProgress]
  */
-export async function readChapter(chapter, hashes, client, chunkSize, onProgress) {
-  const wanted = hashes.slice(chapter.firstChunk, chapter.lastChunk + 1);
-  if (wanted.length !== chapter.lastChunk - chapter.firstChunk + 1) {
-    throw new Error(`index is short: chapter ${chapter.id} needs chunks ${chapter.firstChunk}..${chapter.lastChunk}`);
-  }
+export async function readChapter(chapter, account, client, chunkSize, onProgress) {
+  const { chunks, sources, requests } = await readChapterChunks(client, account, chapter, onProgress);
 
-  const chunks = await client.fetchChunks(wanted, onProgress);
-  const bytes = assembleRange(
-    chunks.map((c) => c.bytes),
-    chapter.byteStart,
-    chapter.byteEnd,
-    chunkSize,
-  );
+  const bytes = assembleRange(chunks, chapter.byteStart, chapter.byteEnd, chunkSize);
 
   const digest = await sha256Hex(bytes);
 
@@ -42,12 +34,10 @@ export async function readChapter(chapter, hashes, client, chunkSize, onProgress
     bytes,
     digest,
     verified: digest === chapter.sha256,
-    sources: chunks.map((chunk, i) => ({
-      index: chapter.firstChunk + i,
-      hash: wanted[i],
-      hex: chunk.hex,
-      tx: chunk.tx,
-      ledger: chunk.tx.ledger_index,
+    requests,
+    sources: sources.map((source, i) => ({
+      ...source,
+      hex: [...chunks[i]].map((b) => b.toString(16).padStart(2, '0').toUpperCase()).join(''),
     })),
   };
 }

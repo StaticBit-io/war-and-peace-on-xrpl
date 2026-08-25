@@ -111,6 +111,19 @@ An earlier copy of this book was uploaded to testnet first, as a rehearsal. Publ
 periodically reset, which is why the live copy lives on mainnet: the transactions behind this site
 are as permanent as the ledger itself.
 
+## Preview image
+
+`preview.jpg` is the 1200x630 card Telegram, X and the rest show when this page is shared. Every
+figure on it is read from `data/manifest.json` at generation time, so the card cannot drift away
+from what the page says. Regenerate it after a re-upload:
+
+```bash
+python tools/build-preview.py
+```
+
+Needs [Pillow](https://pypi.org/project/pillow/) (`pip install pillow`). The site itself has no
+dependencies; this is build-time only.
+
 ## Licence
 
 Site code: MIT. The book itself is in the public domain.

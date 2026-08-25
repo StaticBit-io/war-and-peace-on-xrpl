@@ -28,6 +28,10 @@ Storing 3.3 MB of text cost less than a cup of coffee because **an XRPL fee does
 transaction size**: 10 drops is the base cost whether the transaction carries a payment or a
 kilobyte of Tolstoy.
 
+What that means for the ledger — what a gigabyte actually costs, why the 1 KB memo cap rather than
+the fee schedule is what prices it today, and what changes if the cap is raised — is measured in
+[cost-of-data-on-xrpl](https://github.com/StaticBit-io/cost-of-data-on-xrpl).
+
 ## Why 1,019 bytes
 
 rippled caps the entire serialized `Memos` array at 1024 bytes
